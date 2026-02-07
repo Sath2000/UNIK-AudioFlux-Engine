@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Extract and convert audio from any video to MP3, WAV, AAC, FLAC, OGG, and M4A - 100% offline, secure, and free.">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="EveryVideo">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%23667eea' width='180' height='180'/><text x='90' y='100' font-size='80' font-weight='bold' fill='white' text-anchor='middle'>♪</text></svg>">
+    <title>EveryVideo Audio Extractor & Converter | Extract Audio Online</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --border: #e5e7eb;
+            --bg-light: #f9fafb;
+            --bg-lighter: #f3f4f6;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: var(--text-primary);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            font-size: 0.95em;
+            opacity: 0.95;
+            line-height: 1.5;
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 0.9em;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .upload-zone {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--bg-lighter);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-zone::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .upload-zone:hover::before {
+            left: 100%;
+        }
+
+        .upload-zone:hover {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .upload-zone.drag-over {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            opacity: 0.7;
+            transition: transform 0.3s ease;
+        }
+
+        .upload-zone:hover .upload-icon {
+            transform: scale(1.1) translateY(-5px);
+        }
+
+        .upload-text h3 {
+            font-size: 1.1em;
+            margin-bottom: 5px;
+            color: var(--text-primary);
+        }
+
+        .upload-text p {
+            font-size: 0.9em;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+        }
+
+        .upload-text small {
+            font-size: 0.85em;
+            color: var(--text-secondary);
+            opacity: 0.8;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .file-info {
+            background: var(--bg-lighter);
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 15px;
+            display: none;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .file-info.show {
+            display: flex;
+        }
+
+        .file-icon {
+            font-size: 1.8em;
+            opacity: 0.7;
+        }
+
+        .file-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .file-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            word-break: break-word;
+            font-size: 0.95em;
+        }
+
+        .file-size {
+            font-size: 0.85em;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        .file-clear {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1.2em;
+            padding: 5px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .file-clear:hover {
+            background: rgba(0, 0, 0, 0.05);
+            color: var(--danger);
+        }
+
+        .format-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 10px;
+        }
+
+        .format-option {
+            position: relative;
+        }
+
+        .format-option input[type="radio"] {
+            display: none;
+        }
+
+        .format-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 600;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            background: white;
+            color: var(--text-primary);
+        }
+
+        .format-option input[type="radio"]:checked + .format-label {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .format-label:hover {
+            border-color: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.1);
+        }
+
+        .advanced-options {
+            background: var(--bg-lighter);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 15px;
+        }
+
+        .advanced-options-title {
+            font-weight: 600;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            color: var(--text-primary);
+        }
+
+        .advanced-options-title::before {
+            content: '▼';
+            display: inline-block;
+            transition: transform 0.3s;
+            font-size: 0.8em;
+        }
+
+        .advanced-options-title.collapsed::before {
+            transform: rotate(-90deg);
+        }
+
+        .advanced-content {
+            display: none;
+        }
+
+        .advanced-content.show {
+            display: block;
+        }
+
+        .option-group {
+            margin-bottom: 15px;
+        }
+
+        .option-group label {
+            display: block;
+            font-size: 0.85em;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .option-group select,
+        .option-group input[type="range"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.9em;
+            background: white;
+            color: var(--text-primary);
+        }
+
+        .option-group select:focus,
+        .option-group input[type="range"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .bitrate-display {
+            font-size: 0.85em;
+            color: var(--text-secondary);
+            margin-top: 5px;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        button {
+            padding: 14px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            grid-column: 1 / -1;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-primary:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: var(--bg-lighter);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: var(--border);
+            border-color: var(--text-secondary);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+            grid-column: 1 / -1;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(16, 185, 129, 0.3);
+        }
+
+        .status-box {
+            background: var(--bg-lighter);
+            border-left: 4px solid var(--primary);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            display: none;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .status-box.show {
+            display: block;
+        }
+
+        .status-box.success {
+            background: rgba(16, 185, 129, 0.1);
+            border-left-color: var(--success);
+        }
+
+        .status-box.error {
+            background: rgba(239, 68, 68, 0.1);
+            border-left-color: var(--danger);
+        }
+
+        .status-box.warning {
+            background: rgba(245, 158, 11, 0.1);
+            border-left-color: var(--warning);
+        }
+
+        .status-message {
+            font-size: 0.95em;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .status-subtext {
+            font-size: 0.85em;
+            color: var(--text-secondary);
+        }
+
+        .progress-container {
+            margin-top: 12px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 3px;
+        }
+
+        .download-section {
+            background: var(--bg-lighter);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        .download-section.show {
+            display: block;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .download-icon {
+            font-size: 2.5em;
+            margin-bottom: 12px;
+        }
+
+        .download-text {
+            font-size: 0.9em;
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+        }
+
+        .download-text strong {
+            color: var(--text-primary);
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        .btn-download {
+            background: linear-gradient(135deg, var(--success) 0%, #10b981 100%);
+            color: white;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(16, 185, 129, 0.3);
+        }
+
+        .info-box {
+            background: rgba(99, 102, 241, 0.1);
+            border-left: 4px solid var(--primary);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.85em;
+            color: var(--text-primary);
+            margin-top: 15px;
+        }
+
+        .info-box::before {
+            content: 'ℹ ';
+            font-weight: bold;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .footer {
+            border-top: 1px solid var(--border);
+            padding: 20px 30px;
+            text-align: center;
+            font-size: 0.85em;
+            color: var(--text-secondary);
+            background: var(--bg-light);
+        }
+
+        .footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Badge for loading FFmpeg */
+        .ffmpeg-badge {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            animation: pulse 2s infinite;
+        }
+
+        .ffmpeg-badge.ready {
+            background: var(--success);
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .container {
+                border-radius: 12px;
+            }
+
+            .header {
+                padding: 30px 20px;
+            }
+
+            .header h1 {
+                font-size: 1.5em;
+            }
+
+            .content {
+                padding: 25px 20px;
+            }
+
+            .format-grid {
+                grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+                gap: 8px;
+            }
+
+            .format-label {
+                padding: 10px;
+                font-size: 0.85em;
+            }
+
+            .button-group {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .btn-primary,
+            .btn-success,
+            .btn-download {
+                grid-column: auto !important;
+            }
+
+            .section {
+                margin-bottom: 20px;
+            }
+        }
+
+        /* Batch processing styles */
+        .batch-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .batch-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9em;
+            gap: 10px;
+        }
+
+        .batch-item:last-child {
+            border-bottom: none;
+        }
+
+        .batch-status {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+            font-weight: bold;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .batch-status.pending {
+            background: var(--bg-lighter);
+            color: var(--text-secondary);
+        }
+
+        .batch-status.processing {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+            animation: spin 1s linear infinite;
+        }
+
+        .batch-status.completed {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .batch-status.error {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        .batch-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .batch-filename {
+            word-break: break-word;
+            font-weight: 500;
+        }
+
+        .batch-details {
+            font-size: 0.85em;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎵 EveryVideo Audio Extractor & Converter</h1>
+            <p>Extract & convert audio from any video to MP3, WAV, AAC, FLAC, OGG, and M4A</p>
+        </div>
+
+        <div class="content">
+            <!-- FFmpeg Status -->
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div class="ffmpeg-badge" id="ffmpegStatus">⏳ Loading FFmpeg...</div>
+            </div>
+
+            <!-- Upload Section -->
+            <div class="section">
+                <div class="section-title">Step 1: Upload Video</div>
+                <div class="upload-zone" id="uploadZone">
+                    <input type="file" id="videoInput" accept="video/*" />
+                    <div class="upload-icon">📹</div>
+                    <div class="upload-text">
+                        <h3>Upload your video file</h3>
+                        <p>Click to browse or drag and drop</p>
+                        <small>Supported: MP4, MKV, AVI, MOV, FLV, WMV, WebM, and more</small>
+                    </div>
+                </div>
+                <div class="file-info" id="fileInfo">
+                    <div class="file-icon">📄</div>
+                    <div class="file-details">
+                        <div class="file-name" id="fileName"></div>
+                        <div class="file-size" id="fileSize"></div>
+                    </div>
+                    <button class="file-clear" id="fileClear" title="Clear">✕</button>
+                </div>
+            </div>
+
+            <!-- Format Selection -->
+            <div class="section">
+                <div class="section-title">Step 2: Select Output Format</div>
+                <div class="format-grid" id="formatGrid">
+                    <div class="format-option">
+                        <input type="radio" id="format-mp3" name="format" value="mp3" checked />
+                        <label for="format-mp3" class="format-label">MP3</label>
+                    </div>
+                    <div class="format-option">
+                        <input type="radio" id="format-wav" name="format" value="wav" />
+                        <label for="format-wav" class="format-label">WAV</label>
+                    </div>
+                    <div class="format-option">
+                        <input type="radio" id="format-aac" name="format" value="aac" />
+                        <label for="format-aac" class="format-label">AAC</label>
+                    </div>
+                    <div class="format-option">
+                        <input type="radio" id="format-flac" name="format" value="flac" />
+                        <label for="format-flac" class="format-label">FLAC</label>
+                    </div>
+                    <div class="format-option">
+                        <input type="radio" id="format-ogg" name="format" value="ogg" />
+                        <label for="format-ogg" class="format-label">OGG</label>
+                    </div>
+                    <div class="format-option">
+                        <input type="radio" id="format-m4a" name="format" value="m4a" />
+                        <label for="format-m4a" class="format-label">M4A</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advanced Options -->
+            <div class="section">
+                <div class="advanced-options">
+                    <div class="advanced-options-title collapsed" id="advancedToggle">⚙️ Advanced Options</div>
+                    <div class="advanced-content" id="advancedContent">
+                        <div class="option-group">
+                            <label for="bitrateSelect">Audio Bitrate</label>
+                            <select id="bitrateSelect">
+                                <option value="128">128 kbps (Low)</option>
+                                <option value="192" selected>192 kbps (Medium)</option>
+                                <option value="256">256 kbps (High)</option>
+                                <option value="320">320 kbps (Very High)</option>
+                            </select>
+                        </div>
+
+                        <div class="option-group">
+                            <label for="samplerateSelect">Sample Rate</label>
+                            <select id="samplerateSelect">
+                                <option value="44100">44.1 kHz (CD Quality)</option>
+                                <option value="48000">48 kHz (Professional)</option>
+                                <option value="96000">96 kHz (High Resolution)</option>
+                            </select>
+                        </div>
+
+                        <div class="option-group">
+                            <label for="channelSelect">Audio Channels</label>
+                            <select id="channelSelect">
+                                <option value="2" selected>Stereo (2 Channels)</option>
+                                <option value="1">Mono (1 Channel)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="info-box">All processing happens locally on your device. Your videos never leave your computer.</div>
+            </div>
+
+            <!-- Status Box -->
+            <div class="status-box" id="statusBox">
+                <div class="status-message" id="statusMessage"></div>
+                <div class="status-subtext" id="statusSubtext"></div>
+                <div class="progress-container" id="progressContainer" style="display: none;">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Download Section -->
+            <div class="download-section" id="downloadSection">
+                <div class="download-icon">✅</div>
+                <div class="download-text">
+                    <strong id="downloadFileName"></strong>
+                    Ready to download
+                </div>
+                <button class="btn-download" id="downloadBtn">📥 Download Audio</button>
+                <button class="btn-secondary" id="convertAgainBtn">Convert Another</button>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="button-group" id="actionButtons">
+                <button class="btn-primary" id="convertBtn" disabled>Extract & Convert</button>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>🔒 Completely private & offline | 🚀 Fast processing | 🎵 High-quality audio | Made with ❤️</p>
+            <p style="margin-top: 10px; font-size: 0.8em;">Powered by FFmpeg.wasm</p>
+        </div>
+    </div>
+
+    <!-- FFmpeg.wasm Script -->
+    <script async src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.6/dist/ffmpeg.min.js"></script>
+    <script async src="https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.0/dist/util.min.js"></script>
+
+    <!-- Service Worker Registration -->
+    <script>
+        // Register Service Worker for offline support
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then((registration) => {
+                        console.log('[App] Service Worker registered successfully:', registration);
+                    })
+                    .catch((error) => {
+                        console.log('[App] Service Worker registration failed:', error);
+                        // App still works without Service Worker
+                    });
+            });
+        }
+    </script>
+
+    <script>
+        const { FFmpeg, fetchFile } = FFmpeg;
+
+        // State Management
+        const state = {
+            ffmpeg: new FFmpeg.FFmpeg(),
+            videoFile: null,
+            outputFormat: 'mp3',
+            isProcessing: false,
+            isFFmpegReady: false,
+            generatedBlob: null,
+        };
+
+        // DOM Elements
+        const elements = {
+            ffmpegStatus: document.getElementById('ffmpegStatus'),
+            uploadZone: document.getElementById('uploadZone'),
+            videoInput: document.getElementById('videoInput'),
+            fileInfo: document.getElementById('fileInfo'),
+            fileName: document.getElementById('fileName'),
+            fileSize: document.getElementById('fileSize'),
+            fileClear: document.getElementById('fileClear'),
+            formatGrid: document.getElementById('formatGrid'),
+            advancedToggle: document.getElementById('advancedToggle'),
+            advancedContent: document.getElementById('advancedContent'),
+            bitrateSelect: document.getElementById('bitrateSelect'),
+            samplerateSelect: document.getElementById('samplerateSelect'),
+            channelSelect: document.getElementById('channelSelect'),
+            statusBox: document.getElementById('statusBox'),
+            statusMessage: document.getElementById('statusMessage'),
+            statusSubtext: document.getElementById('statusSubtext'),
+            progressContainer: document.getElementById('progressContainer'),
+            progressFill: document.getElementById('progressFill'),
+            downloadSection: document.getElementById('downloadSection'),
+            downloadFileName: document.getElementById('downloadFileName'),
+            downloadBtn: document.getElementById('downloadBtn'),
+            convertAgainBtn: document.getElementById('convertAgainBtn'),
+            convertBtn: document.getElementById('convertBtn'),
+            actionButtons: document.getElementById('actionButtons'),
+        };
+
+        // Initialize FFmpeg
+        async function initFFmpeg() {
+            try {
+                const baseURL = 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/esm';
+                state.ffmpeg.on('log', ({ type, message }) => {
+                    console.log(`[FFmpeg ${type}]`, message);
+                });
+
+                await state.ffmpeg.load({
+                    coreURL: `${baseURL}/ffmpeg-core.js`,
+                    wasmURL: `${baseURL}/ffmpeg-core.wasm`,
+                });
+
+                state.isFFmpegReady = true;
+                elements.ffmpegStatus.textContent = '✅ Ready to use';
+                elements.ffmpegStatus.classList.add('ready');
+                elements.convertBtn.disabled = false;
+            } catch (error) {
+                console.error('FFmpeg initialization failed:', error);
+                showStatus('error', 'FFmpeg Failed', 'Failed to load FFmpeg. Please refresh the page.');
+                elements.ffmpegStatus.textContent = '❌ FFmpeg Failed';
+                elements.ffmpegStatus.style.background = 'var(--danger)';
+            }
+        }
+
+        // Initialize on page load
+        window.addEventListener('load', initFFmpeg);
+
+        // Upload Zone Handlers
+        elements.uploadZone.addEventListener('click', () => {
+            elements.videoInput.click();
+        });
+
+        elements.uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            elements.uploadZone.classList.add('drag-over');
+        });
+
+        elements.uploadZone.addEventListener('dragleave', () => {
+            elements.uploadZone.classList.remove('drag-over');
+        });
+
+        elements.uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            elements.uploadZone.classList.remove('drag-over');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFileSelect(files[0]);
+            }
+        });
+
+        elements.videoInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileSelect(e.target.files[0]);
+            }
+        });
+
+        function handleFileSelect(file) {
+            if (!file.type.startsWith('video/')) {
+                showStatus('error', 'Invalid File', 'Please upload a video file.');
+                return;
+            }
+
+            state.videoFile = file;
+            elements.fileName.textContent = file.name;
+            elements.fileSize.textContent = `${(file.size / (1024 * 1024)).toFixed(2)} MB`;
+            elements.fileInfo.classList.add('show');
+            elements.convertBtn.disabled = false;
+        }
+
+        elements.fileClear.addEventListener('click', () => {
+            state.videoFile = null;
+            elements.videoInput.value = '';
+            elements.fileInfo.classList.remove('show');
+            elements.convertBtn.disabled = true;
+            elements.downloadSection.classList.remove('show');
+            elements.statusBox.classList.remove('show');
+        });
+
+        // Format Selection
+        document.querySelectorAll('input[name="format"]').forEach((radio) => {
+            radio.addEventListener('change', (e) => {
+                state.outputFormat = e.target.value;
+            });
+        });
+
+        // Advanced Options Toggle
+        elements.advancedToggle.addEventListener('click', () => {
+            elements.advancedToggle.classList.toggle('collapsed');
+            elements.advancedContent.classList.toggle('show');
+        });
+
+        // Status Display
+        function showStatus(type, title, message, showProgress = false) {
+            elements.statusBox.className = `status-box show ${type}`;
+            elements.statusMessage.textContent = title;
+            elements.statusSubtext.textContent = message;
+
+            if (showProgress) {
+                elements.progressContainer.style.display = 'block';
+                elements.progressFill.style.width = '0%';
+            } else {
+                elements.progressContainer.style.display = 'none';
+            }
+        }
+
+        function updateProgress(percentage) {
+            elements.progressFill.style.width = `${Math.min(percentage, 100)}%`;
+        }
+
+        // Main Conversion Function
+        elements.convertBtn.addEventListener('click', async () => {
+            if (!state.videoFile) {
+                showStatus('error', 'No File Selected', 'Please upload a video file first.');
+                return;
+            }
+
+            if (!state.isFFmpegReady) {
+                showStatus('error', 'FFmpeg Not Ready', 'Please wait for FFmpeg to load.');
+                return;
+            }
+
+            await convertVideo();
+        });
+
+        async function convertVideo() {
+            state.isProcessing = true;
+            elements.convertBtn.disabled = true;
+            elements.downloadSection.classList.remove('show');
+            updateProgress(0);
+            showStatus('info', 'Processing', 'Loading video file...', true);
+
+            try {
+                const inputFileName = 'input_video';
+                const outputFileName = `output.${state.outputFormat}`;
+
+                // Load video file
+                updateProgress(15);
+                const videoData = await fetchFile(state.videoFile);
+                await state.ffmpeg.writeFile(inputFileName, videoData);
+
+                // Build FFmpeg command
+                updateProgress(30);
+                const bitrate = elements.bitrateSelect.value;
+                const samplerate = elements.samplerateSelect.value;
+                const channels = elements.channelSelect.value;
+
+                let ffmpegCommand = [
+                    '-i', inputFileName,
+                    '-vn', // No video
+                    '-acodec',
+                ];
+
+                // Set audio codec based on format
+                const codecMap = {
+                    'mp3': 'libmp3lame',
+                    'wav': 'pcm_s16le',
+                    'aac': 'aac',
+                    'flac': 'flac',
+                    'ogg': 'libvorbis',
+                    'm4a': 'aac',
+                };
+
+                ffmpegCommand.push(codecMap[state.outputFormat] || 'libmp3lame');
+                ffmpegCommand.push('-b:a', `${bitrate}k`);
+                ffmpegCommand.push('-ar', samplerate);
+                ffmpegCommand.push('-ac', channels);
+                ffmpegCommand.push(outputFileName);
+
+                // Run conversion
+                updateProgress(50);
+                showStatus('info', 'Converting', `Converting to ${state.outputFormat.toUpperCase()}...`, true);
+                await state.ffmpeg.exec(ffmpegCommand);
+
+                // Fetch output
+                updateProgress(85);
+                const data = await state.ffmpeg.readFile(outputFileName);
+                const blob = new Blob([data.buffer], {
+                    'video/mp4': 'audio/mpeg',
+                    'audio/wav': 'audio/wav',
+                    'audio/aac': 'audio/aac',
+                    'audio/flac': 'audio/flac',
+                    'audio/ogg': 'audio/ogg',
+                    'audio/mp4': 'audio/mp4',
+                }[`audio/${state.outputFormat}`] || 'audio/mpeg');
+
+                state.generatedBlob = blob;
+
+                // Clean up
+                updateProgress(95);
+                await state.ffmpeg.deleteFile(inputFileName);
+                await state.ffmpeg.deleteFile(outputFileName);
+
+                updateProgress(100);
+                showStatus('success', 'Conversion Complete!', `Audio extracted and converted to ${state.outputFormat.toUpperCase()}`);
+                showDownloadSection();
+            } catch (error) {
+                console.error('Conversion error:', error);
+                showStatus('error', 'Conversion Failed', error.message || 'An error occurred during conversion.');
+            } finally {
+                state.isProcessing = false;
+                elements.convertBtn.disabled = false;
+            }
+        }
+
+        function showDownloadSection() {
+            const outputFileName = `${state.videoFile.name.split('.')[0]}.${state.outputFormat}`;
+            elements.downloadFileName.textContent = outputFileName;
+            elements.downloadSection.classList.add('show');
+        }
+
+        // Download Handler
+        elements.downloadBtn.addEventListener('click', () => {
+            if (!state.generatedBlob) return;
+
+            const url = URL.createObjectURL(state.generatedBlob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${state.videoFile.name.split('.')[0]}.${state.outputFormat}`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+
+        // Convert Another Handler
+        elements.convertAgainBtn.addEventListener('click', () => {
+            elements.videoInput.value = '';
+            state.videoFile = null;
+            elements.fileInfo.classList.remove('show');
+            elements.downloadSection.classList.remove('show');
+            elements.statusBox.classList.remove('show');
+            elements.convertBtn.disabled = true;
+            elements.videoInput.click();
+        });
+
+        // ==================== ADVANCED FEATURES ====================
+
+        // PWA Install Prompt Handling
+        let installPrompt = null;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            installPrompt = e;
+            console.log('[App] PWA install prompt ready');
+        });
+
+        // Memory Monitoring
+        function checkMemory() {
+            if (state.videoFile) {
+                const fileSizeMB = state.videoFile.size / (1024 * 1024);
+                if (fileSizeMB > 1500) {
+                    console.warn(`[App] Large file detected: ${fileSizeMB.toFixed(2)} MB`);
+                    console.warn('[App] This may consume significant memory. Processing may be slow.');
+                }
+            }
+        }
+
+        // Performance Monitoring
+        function logPerformance(startTime, stage) {
+            const elapsed = Date.now() - startTime;
+            console.log(`[Performance] ${stage}: ${elapsed}ms`);
+        }
+
+        // Enhanced File Selection with Memory Check
+        const originalHandleFileSelect = handleFileSelect;
+        function handleFileSelect(file) {
+            if (!file.type.startsWith('video/')) {
+                showStatus('error', 'Invalid File', 'Please upload a video file.');
+                return;
+            }
+
+            // Check file size
+            const fileSizeMB = file.size / (1024 * 1024);
+            if (fileSizeMB > 4000) {
+                showStatus('warning', 'Large File Warning', `File is ${fileSizeMB.toFixed(2)} MB. Processing may be slow or fail. Consider using a smaller file.`);
+                // Still proceed but user is warned
+            }
+
+            state.videoFile = file;
+            elements.fileName.textContent = file.name;
+            elements.fileSize.textContent = `${fileSizeMB.toFixed(2)} MB`;
+            elements.fileInfo.classList.add('show');
+            elements.convertBtn.disabled = false;
+            
+            console.log(`[App] File selected: ${file.name} (${fileSizeMB.toFixed(2)} MB)`);
+        }
+
+        // Save User Preferences
+        function savePreferences() {
+            const prefs = {
+                format: state.outputFormat,
+                bitrate: elements.bitrateSelect.value,
+                samplerate: elements.samplerateSelect.value,
+                channels: elements.channelSelect.value,
+            };
+            localStorage.setItem('everyvideoPrefs', JSON.stringify(prefs));
+            console.log('[App] User preferences saved');
+        }
+
+        // Load User Preferences
+        function loadPreferences() {
+            try {
+                const prefs = JSON.parse(localStorage.getItem('everyvideoPrefs'));
+                if (prefs) {
+                    // Restore format
+                    document.getElementById(`format-${prefs.format}`)?.click?.();
+                    
+                    // Restore quality settings
+                    elements.bitrateSelect.value = prefs.bitrate || '192';
+                    elements.samplerateSelect.value = prefs.samplerate || '44100';
+                    elements.channelSelect.value = prefs.channels || '2';
+                    
+                    console.log('[App] User preferences loaded');
+                }
+            } catch (e) {
+                console.log('[App] No saved preferences found');
+            }
+        }
+
+        // Auto-save preferences when changed
+        [elements.bitrateSelect, elements.samplerateSelect, elements.channelSelect].forEach(el => {
+            el?.addEventListener?.('change', savePreferences);
+        });
+        document.querySelectorAll('input[name="format"]').forEach(radio => {
+            radio.addEventListener('change', savePreferences);
+        });
+
+        // Load preferences on startup
+        document.addEventListener('DOMContentLoaded', loadPreferences);
+
+        // Page Visibility Handling
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                console.log('[App] App hidden');
+            } else {
+                console.log('[App] App visible');
+            }
+        });
+
+        // Unload Warning
+        window.addEventListener('beforeunload', (e) => {
+            if (state.isProcessing) {
+                e.preventDefault();
+                e.returnValue = '';
+                return false;
+            }
+        });
+
+        // Error Boundary
+        window.addEventListener('error', (event) => {
+            console.error('[App Error]', event.error);
+            showStatus('error', 'Application Error', event.error?.message || 'An unexpected error occurred.');
+        });
+
+        // Log App Version & Info
+        console.log('%c🎵 EveryVideo Audio Extractor & Converter', 'color: #667eea; font-size: 14px; font-weight: bold;');
+        console.log('%cVersion 1.0.0 | February 2026', 'color: #8b5cf6; font-size: 12px;');
+        console.log('%c✅ 100%% offline | 🔒 Private | 🚀 Fast', 'color: #10b981; font-size: 12px;');
+        console.log('Made with ❤️ for quality audio conversion');
+
+        // Keyboard Shortcuts
+        document.addEventListener('keydown', (e) => {
+            // Ctrl/Cmd + Enter to convert
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                if (!elements.convertBtn.disabled && !state.isProcessing) {
+                    elements.convertBtn.click();
+                }
+            }
+            // Ctrl/Cmd + K to clear
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                elements.fileClear?.click?.();
+            }
+        });
+
+        console.log('[App] ✅ All modules loaded successfully');
+    </script>
+</body>
+</html>
