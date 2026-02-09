@@ -1,4 +1,4 @@
-// Service Worker for EveryVideo Audio Extractor & Converter
+// Service Worker for UNIK AudioFlux Engine
 // Enables offline functionality after first load
 
 const CACHE_NAME = 'everyvideoconverter-v1';
@@ -48,7 +48,7 @@ self.addEventListener('activate', (event) => {
     );
 });
 
-// Fetch event: Network-first strategy with fallback to cache
+// Fetch event: Network-first strategy (ONLINE MODE PRIMARY)
 self.addEventListener('fetch', (event) => {
     const { request } = event;
     const url = new URL(request.url);
@@ -58,44 +58,35 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // Strategy for app files: Cache-first (network fallback)
+    // Strategy for app files: Network-first, cache fallback
     if (url.origin === self.location.origin) {
         event.respondWith(
-            caches.match(request)
+            fetch(request)
                 .then((response) => {
-                    if (response) {
-                        return response;
-                    }
-                    
-                    return fetch(request).then((response) => {
-                        // Don't cache non-successful responses
-                        if (!response || response.status !== 200 || response.type === 'error') {
-                            return response;
-                        }
-
-                        // Cache successful responses
+                    // Cache successful responses
+                    if (response && response.status === 200) {
                         const responseToCache = response.clone();
                         caches.open(CACHE_NAME).then((cache) => {
                             cache.put(request, responseToCache);
                         });
-
-                        return response;
-                    }).catch(() => {
-                        // Fallback for offline
-                        return caches.match(request) || 
-                               new Response('Offline - Page not available', {
-                                   status: 503,
-                                   statusText: 'Service Unavailable',
-                                   headers: new Headers({
-                                       'Content-Type': 'text/plain'
-                                   })
-                               });
-                    });
+                    }
+                    return response;
                 })
+                .catch(() => {
+                    // Fallback to cache only if network fails
+                    return caches.match(request) || 
+                           new Response('Offline - Page not available', {
+                               status: 503,
+                               statusText: 'Service Unavailable',
+                               headers: new Headers({
+                                   'Content-Type': 'text/plain'
+                               })
+                           });
+                });
         );
     }
 
-    // Strategy for external resources: Network-first with cache fallback
+    // Strategy for external resources (FFmpeg, fonts): Network-first
     if (EXTERNAL_RESOURCES.some(resource => request.url.includes(resource))) {
         event.respondWith(
             fetch(request)
@@ -110,8 +101,12 @@ self.addEventListener('fetch', (event) => {
                     return response;
                 })
                 .catch(() => {
-                    // Fallback to cache for FFmpeg resources
-                    return caches.match(request);
+                    // Fallback to cache for offline access if available
+                    return caches.match(request) ||
+                           new Response('Resource unavailable', {
+                               status: 503,
+                               headers: new Headers({ 'Content-Type': 'text/plain' })
+                           });
                 })
         );
     }

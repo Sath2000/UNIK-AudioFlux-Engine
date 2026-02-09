@@ -1,0 +1,7 @@
+PLACEHOLDER
+
+This folder is reserved for vendored FFmpeg files.
+Replace these placeholders with the real files:
+- ffmpeg.min.js
+- ffmpeg-core.js
+- ffmpeg-core.wasm

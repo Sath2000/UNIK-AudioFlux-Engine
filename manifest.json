@@ -1,6 +1,6 @@
 {
-  "name": "EveryVideo Audio Extractor & Converter",
-  "short_name": "EveryVideo",
+  "name": "UNIK AudioFlux Engine",
+  "short_name": "UNIK AudioFlux",
   "description": "Extract and convert audio from any video file to MP3, WAV, AAC, FLAC, OGG, and M4A - 100% offline, no uploads, secure.",
   "start_url": "/",
   "scope": "/",
@@ -25,7 +25,7 @@
   "categories": ["productivity", "utilities"],
   "screenshots": [
     {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 540 720'><rect fill='%23f3f4f6' width='540' height='720'/><rect fill='%23667eea' y='0' width='540' height='120'/><text x='270' y='60' text-anchor='middle' font-size='24' font-weight='bold' fill='white'>EveryVideo</text><rect x='30' y='150' width='480' height='100' rx='10' fill='%23e5e7eb'/><text x='270' y='210' text-anchor='middle' font-size='16' fill='%236b7280'>Upload Video</text><rect x='30' y='280' width='480' height='80' rx='10' fill='%23e5e7eb'/><text x='270' y='325' text-anchor='middle' font-size='14' fill='%236b7280'>Select Format</text><rect x='30' y='390' width='480' height='60' rx='10' fill='%23667eea'/><text x='270' y='425' text-anchor='middle' font-size='14' fill='white'>Convert</text></svg>",
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 540 720'><rect fill='%23f3f4f6' width='540' height='720'/><rect fill='%23667eea' y='0' width='540' height='120'/><text x='270' y='60' text-anchor='middle' font-size='24' font-weight='bold' fill='white'>UNIK AudioFlux</text><rect x='30' y='150' width='480' height='100' rx='10' fill='%23e5e7eb'/><text x='270' y='210' text-anchor='middle' font-size='16' fill='%236b7280'>Upload Video</text><rect x='30' y='280' width='480' height='80' rx='10' fill='%23e5e7eb'/><text x='270' y='325' text-anchor='middle' font-size='14' fill='%236b7280'>Select Format</text><rect x='30' y='390' width='480' height='60' rx='10' fill='%23667eea'/><text x='270' y='425' text-anchor='middle' font-size='14' fill='white'>Convert</text></svg>",
       "sizes": "540x720",
       "form_factor": "narrow"
     }

@@ -4,703 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Extract and convert audio from any video to MP3, WAV, AAC, FLAC, OGG, and M4A - 100% offline, secure, and free.">
-    <meta name="theme-color" content="#667eea">
+    <meta name="theme-color" content="#000000">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="EveryVideo">
+    <meta name="apple-mobile-web-app-title" content="UNIK AudioFlux Engine">
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%23667eea' width='180' height='180'/><text x='90' y='100' font-size='80' font-weight='bold' fill='white' text-anchor='middle'>♪</text></svg>">
-    <title>EveryVideo Audio Extractor & Converter | Extract Audio Online</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --primary-light: #818cf8;
-            --secondary: #8b5cf6;
-            --success: #10b981;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --text-primary: #1f2937;
-            --text-secondary: #6b7280;
-            --border: #e5e7eb;
-            --bg-light: #f9fafb;
-            --bg-lighter: #f3f4f6;
-            --shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            color: var(--text-primary);
-        }
-
-        .container {
-            width: 100%;
-            max-width: 800px;
-            background: white;
-            border-radius: 20px;
-            box-shadow: var(--shadow-lg);
-            overflow: hidden;
-            animation: slideUp 0.6s ease-out;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .header {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            color: white;
-            padding: 40px 30px;
-            text-align: center;
-        }
-
-        .header h1 {
-            font-size: 2em;
-            font-weight: 700;
-            margin-bottom: 8px;
-            letter-spacing: -0.5px;
-        }
-
-        .header p {
-            font-size: 0.95em;
-            opacity: 0.95;
-            line-height: 1.5;
-        }
-
-        .content {
-            padding: 40px 30px;
-        }
-
-        .section {
-            margin-bottom: 30px;
-        }
-
-        .section-title {
-            font-size: 0.9em;
-            font-weight: 600;
-            text-transform: uppercase;
-            color: var(--text-secondary);
-            margin-bottom: 12px;
-            letter-spacing: 0.5px;
-        }
-
-        .upload-zone {
-            border: 2px dashed var(--border);
-            border-radius: 12px;
-            padding: 40px 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: var(--bg-lighter);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .upload-zone::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            transition: left 0.5s;
-        }
-
-        .upload-zone:hover::before {
-            left: 100%;
-        }
-
-        .upload-zone:hover {
-            border-color: var(--primary);
-            background: rgba(99, 102, 241, 0.05);
-            transform: translateY(-2px);
-        }
-
-        .upload-zone.drag-over {
-            border-color: var(--primary);
-            background: rgba(99, 102, 241, 0.1);
-            transform: scale(1.02);
-        }
-
-        .upload-icon {
-            font-size: 2.5em;
-            margin-bottom: 15px;
-            opacity: 0.7;
-            transition: transform 0.3s ease;
-        }
-
-        .upload-zone:hover .upload-icon {
-            transform: scale(1.1) translateY(-5px);
-        }
-
-        .upload-text h3 {
-            font-size: 1.1em;
-            margin-bottom: 5px;
-            color: var(--text-primary);
-        }
-
-        .upload-text p {
-            font-size: 0.9em;
-            color: var(--text-secondary);
-            margin-bottom: 5px;
-        }
-
-        .upload-text small {
-            font-size: 0.85em;
-            color: var(--text-secondary);
-            opacity: 0.8;
-        }
-
-        input[type="file"] {
-            display: none;
-        }
-
-        .file-info {
-            background: var(--bg-lighter);
-            border-radius: 12px;
-            padding: 15px;
-            margin-top: 15px;
-            display: none;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .file-info.show {
-            display: flex;
-        }
-
-        .file-icon {
-            font-size: 1.8em;
-            opacity: 0.7;
-        }
-
-        .file-details {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .file-name {
-            font-weight: 600;
-            color: var(--text-primary);
-            word-break: break-word;
-            font-size: 0.95em;
-        }
-
-        .file-size {
-            font-size: 0.85em;
-            color: var(--text-secondary);
-            margin-top: 2px;
-        }
-
-        .file-clear {
-            background: transparent;
-            border: none;
-            color: var(--text-secondary);
-            cursor: pointer;
-            font-size: 1.2em;
-            padding: 5px;
-            border-radius: 6px;
-            transition: all 0.2s;
-        }
-
-        .file-clear:hover {
-            background: rgba(0, 0, 0, 0.05);
-            color: var(--danger);
-        }
-
-        .format-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-            gap: 10px;
-        }
-
-        .format-option {
-            position: relative;
-        }
-
-        .format-option input[type="radio"] {
-            display: none;
-        }
-
-        .format-label {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 12px;
-            border: 2px solid var(--border);
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-weight: 600;
-            font-size: 0.9em;
-            text-transform: uppercase;
-            background: white;
-            color: var(--text-primary);
-        }
-
-        .format-option input[type="radio"]:checked + .format-label {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-        }
-
-        .format-label:hover {
-            border-color: var(--primary-light);
-            transform: translateY(-2px);
-            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.1);
-        }
-
-        .advanced-options {
-            background: var(--bg-lighter);
-            border-radius: 12px;
-            padding: 20px;
-            margin-top: 15px;
-        }
-
-        .advanced-options-title {
-            font-weight: 600;
-            font-size: 0.9em;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            color: var(--text-primary);
-        }
-
-        .advanced-options-title::before {
-            content: '▼';
-            display: inline-block;
-            transition: transform 0.3s;
-            font-size: 0.8em;
-        }
-
-        .advanced-options-title.collapsed::before {
-            transform: rotate(-90deg);
-        }
-
-        .advanced-content {
-            display: none;
-        }
-
-        .advanced-content.show {
-            display: block;
-        }
-
-        .option-group {
-            margin-bottom: 15px;
-        }
-
-        .option-group label {
-            display: block;
-            font-size: 0.85em;
-            font-weight: 500;
-            margin-bottom: 8px;
-            color: var(--text-primary);
-        }
-
-        .option-group select,
-        .option-group input[type="range"] {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            font-size: 0.9em;
-            background: white;
-            color: var(--text-primary);
-        }
-
-        .option-group select:focus,
-        .option-group input[type="range"]:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-        }
-
-        .bitrate-display {
-            font-size: 0.85em;
-            color: var(--text-secondary);
-            margin-top: 5px;
-        }
-
-        .button-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-top: 25px;
-        }
-
-        button {
-            padding: 14px 24px;
-            border: none;
-            border-radius: 10px;
-            font-size: 1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            color: white;
-            grid-column: 1 / -1;
-        }
-
-        .btn-primary:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(99, 102, 241, 0.3);
-        }
-
-        .btn-primary:active:not(:disabled) {
-            transform: translateY(0);
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .btn-secondary {
-            background: var(--bg-lighter);
-            color: var(--text-primary);
-            border: 1px solid var(--border);
-        }
-
-        .btn-secondary:hover:not(:disabled) {
-            background: var(--border);
-            border-color: var(--text-secondary);
-        }
-
-        .btn-success {
-            background: var(--success);
-            color: white;
-            grid-column: 1 / -1;
-        }
-
-        .btn-success:hover {
-            background: #059669;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(16, 185, 129, 0.3);
-        }
-
-        .status-box {
-            background: var(--bg-lighter);
-            border-left: 4px solid var(--primary);
-            padding: 15px;
-            border-radius: 8px;
-            margin: 20px 0;
-            display: none;
-            animation: slideUp 0.3s ease-out;
-        }
-
-        .status-box.show {
-            display: block;
-        }
-
-        .status-box.success {
-            background: rgba(16, 185, 129, 0.1);
-            border-left-color: var(--success);
-        }
-
-        .status-box.error {
-            background: rgba(239, 68, 68, 0.1);
-            border-left-color: var(--danger);
-        }
-
-        .status-box.warning {
-            background: rgba(245, 158, 11, 0.1);
-            border-left-color: var(--warning);
-        }
-
-        .status-message {
-            font-size: 0.95em;
-            font-weight: 500;
-            color: var(--text-primary);
-            margin-bottom: 8px;
-        }
-
-        .status-subtext {
-            font-size: 0.85em;
-            color: var(--text-secondary);
-        }
-
-        .progress-container {
-            margin-top: 12px;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 6px;
-            background: rgba(0, 0, 0, 0.1);
-            border-radius: 3px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            width: 0%;
-            transition: width 0.3s ease;
-            border-radius: 3px;
-        }
-
-        .download-section {
-            background: var(--bg-lighter);
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            display: none;
-        }
-
-        .download-section.show {
-            display: block;
-            animation: slideUp 0.3s ease-out;
-        }
-
-        .download-icon {
-            font-size: 2.5em;
-            margin-bottom: 12px;
-        }
-
-        .download-text {
-            font-size: 0.9em;
-            color: var(--text-secondary);
-            margin-bottom: 15px;
-        }
-
-        .download-text strong {
-            color: var(--text-primary);
-            display: block;
-            margin-bottom: 3px;
-        }
-
-        .btn-download {
-            background: linear-gradient(135deg, var(--success) 0%, #10b981 100%);
-            color: white;
-            width: 100%;
-            margin-top: 10px;
-        }
-
-        .btn-download:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(16, 185, 129, 0.3);
-        }
-
-        .info-box {
-            background: rgba(99, 102, 241, 0.1);
-            border-left: 4px solid var(--primary);
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 0.85em;
-            color: var(--text-primary);
-            margin-top: 15px;
-        }
-
-        .info-box::before {
-            content: 'ℹ ';
-            font-weight: bold;
-        }
-
-        .loading-spinner {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .footer {
-            border-top: 1px solid var(--border);
-            padding: 20px 30px;
-            text-align: center;
-            font-size: 0.85em;
-            color: var(--text-secondary);
-            background: var(--bg-light);
-        }
-
-        .footer a {
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .footer a:hover {
-            text-decoration: underline;
-        }
-
-        /* Badge for loading FFmpeg */
-        .ffmpeg-badge {
-            display: inline-block;
-            background: var(--primary);
-            color: white;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.8em;
-            font-weight: 600;
-            margin-bottom: 15px;
-            animation: pulse 2s infinite;
-        }
-
-        .ffmpeg-badge.ready {
-            background: var(--success);
-            animation: none;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-
-        /* Responsive Design */
-        @media (max-width: 600px) {
-            .container {
-                border-radius: 12px;
-            }
-
-            .header {
-                padding: 30px 20px;
-            }
-
-            .header h1 {
-                font-size: 1.5em;
-            }
-
-            .content {
-                padding: 25px 20px;
-            }
-
-            .format-grid {
-                grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
-                gap: 8px;
-            }
-
-            .format-label {
-                padding: 10px;
-                font-size: 0.85em;
-            }
-
-            .button-group {
-                grid-template-columns: 1fr;
-                gap: 10px;
-            }
-
-            .btn-primary,
-            .btn-success,
-            .btn-download {
-                grid-column: auto !important;
-            }
-
-            .section {
-                margin-bottom: 20px;
-            }
-        }
-
-        /* Batch processing styles */
-        .batch-list {
-            max-height: 300px;
-            overflow-y: auto;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            margin-top: 10px;
-        }
-
-        .batch-item {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            border-bottom: 1px solid var(--border);
-            font-size: 0.9em;
-            gap: 10px;
-        }
-
-        .batch-item:last-child {
-            border-bottom: none;
-        }
-
-        .batch-status {
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8em;
-            font-weight: bold;
-            border-radius: 50%;
-            flex-shrink: 0;
-        }
-
-        .batch-status.pending {
-            background: var(--bg-lighter);
-            color: var(--text-secondary);
-        }
-
-        .batch-status.processing {
-            background: rgba(245, 158, 11, 0.2);
-            color: var(--warning);
-            animation: spin 1s linear infinite;
-        }
-
-        .batch-status.completed {
-            background: rgba(16, 185, 129, 0.2);
-            color: var(--success);
-        }
-
-        .batch-status.error {
-            background: rgba(239, 68, 68, 0.2);
-            color: var(--danger);
-        }
-
-        .batch-info {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .batch-filename {
-            word-break: break-word;
-            font-weight: 500;
-        }
-
-        .batch-details {
-            font-size: 0.85em;
-            color: var(--text-secondary);
-            margin-top: 2px;
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>UNIK AudioFlux Engine | Extract Audio Offline</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🎵 EveryVideo Audio Extractor & Converter</h1>
+            <h1><span class="animated-title">UNIK AudioFlux Engine</span></h1>
             <p>Extract & convert audio from any video to MP3, WAV, AAC, FLAC, OGG, and M4A</p>
         </div>
 
@@ -833,33 +150,34 @@
         </div>
     </div>
 
-    <!-- FFmpeg.wasm Script -->
-    <script async src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.6/dist/ffmpeg.min.js"></script>
-    <script async src="https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.0/dist/util.min.js"></script>
+    <!-- FFmpeg.wasm Scripts (local vendored files) -->
+    <!-- Place real files in /ffmpeg as described in /ffmpeg/README.txt -->
+    <script async src="/ffmpeg/ffmpeg.min.js"></script>
+    <script async src="/ffmpeg/util.min.js"></script>
 
-    <!-- Service Worker Registration -->
+    <!-- Service Worker Registration (Optional Offline Cache) -->
     <script>
-        // Register Service Worker for offline support
+        // Register Service Worker for optional offline support and caching
+        // Site works perfectly online; SW is supplementary for offline access
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
                     .then((registration) => {
-                        console.log('[App] Service Worker registered successfully:', registration);
+                        console.log('[App] ✅ Service Worker registered for offline cache support');
                     })
                     .catch((error) => {
-                        console.log('[App] Service Worker registration failed:', error);
-                        // App still works without Service Worker
+                        console.log('[App] ℹ️ Service Worker not available (site works online without it)');
                     });
             });
         }
     </script>
 
     <script>
-        const { FFmpeg, fetchFile } = FFmpeg;
+        const { createFFmpeg, fetchFile } = FFmpeg;
 
         // State Management
         const state = {
-            ffmpeg: new FFmpeg.FFmpeg(),
+            ffmpeg: null,
             videoFile: null,
             outputFormat: 'mp3',
             isProcessing: false,
@@ -895,18 +213,28 @@
             actionButtons: document.getElementById('actionButtons'),
         };
 
-        // Initialize FFmpeg
+        // Initialize FFmpeg using createFFmpeg (network-first)
         async function initFFmpeg() {
             try {
-                const baseURL = 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/esm';
-                state.ffmpeg.on('log', ({ type, message }) => {
-                    console.log(`[FFmpeg ${type}]`, message);
+                // Ensure the FFmpeg script bundle is present (vendored in /ffmpeg)
+                if (typeof FFmpeg === 'undefined') {
+                    elements.ffmpegStatus.textContent = '❌ FFmpeg scripts missing';
+                    showStatus('error', 'FFmpeg Not Found', 'Place ffmpeg.min.js, ffmpeg-core.js, and ffmpeg-core.wasm in /ffmpeg. See /ffmpeg/README.txt');
+                    return;
+                }
+
+                // createFFmpeg will load core from local /ffmpeg
+                state.ffmpeg = createFFmpeg({
+                    log: true,
+                    corePath: '/ffmpeg/ffmpeg-core.js'
                 });
 
-                await state.ffmpeg.load({
-                    coreURL: `${baseURL}/ffmpeg-core.js`,
-                    wasmURL: `${baseURL}/ffmpeg-core.wasm`,
-                });
+                // Logger and progress hooks
+                try { state.ffmpeg.setLogger(({ type, message }) => console.log(`[FFmpeg ${type}] ${message}`)); } catch (e) {}
+                try { state.ffmpeg.setProgress(({ ratio }) => updateProgress(Math.round(ratio * 100))); } catch (e) {}
+
+                elements.ffmpegStatus.textContent = '⏳ Loading FFmpeg...';
+                await state.ffmpeg.load();
 
                 state.isFFmpegReady = true;
                 elements.ffmpegStatus.textContent = '✅ Ready to use';
@@ -916,7 +244,6 @@
                 console.error('FFmpeg initialization failed:', error);
                 showStatus('error', 'FFmpeg Failed', 'Failed to load FFmpeg. Please refresh the page.');
                 elements.ffmpegStatus.textContent = '❌ FFmpeg Failed';
-                elements.ffmpegStatus.style.background = 'var(--danger)';
             }
         }
 
@@ -1028,13 +355,15 @@
             showStatus('info', 'Processing', 'Loading video file...', true);
 
             try {
-                const inputFileName = 'input_video';
-                const outputFileName = `output.${state.outputFormat}`;
+            const originalName = state.videoFile.name || 'input';
+            const originalExt = originalName.split('.').pop() || 'mp4';
+            const inputFileName = `input.${originalExt}`;
+            const outputFileName = `output.${state.outputFormat}`;
 
-                // Load video file
-                updateProgress(15);
-                const videoData = await fetchFile(state.videoFile);
-                await state.ffmpeg.writeFile(inputFileName, videoData);
+            // Load video file into FFmpeg FS
+            updateProgress(15);
+            const videoData = await fetchFile(state.videoFile);
+            state.ffmpeg.FS('writeFile', inputFileName, videoData);
 
                 // Build FFmpeg command
                 updateProgress(30);
@@ -1064,29 +393,29 @@
                 ffmpegCommand.push('-ac', channels);
                 ffmpegCommand.push(outputFileName);
 
-                // Run conversion
+                // Run conversion (use run with args)
                 updateProgress(50);
                 showStatus('info', 'Converting', `Converting to ${state.outputFormat.toUpperCase()}...`, true);
-                await state.ffmpeg.exec(ffmpegCommand);
+                await state.ffmpeg.run(...ffmpegCommand);
 
-                // Fetch output
+                // Fetch output from FS
                 updateProgress(85);
-                const data = await state.ffmpeg.readFile(outputFileName);
-                const blob = new Blob([data.buffer], {
-                    'video/mp4': 'audio/mpeg',
-                    'audio/wav': 'audio/wav',
-                    'audio/aac': 'audio/aac',
-                    'audio/flac': 'audio/flac',
-                    'audio/ogg': 'audio/ogg',
-                    'audio/mp4': 'audio/mp4',
-                }[`audio/${state.outputFormat}`] || 'audio/mpeg');
-
+                const data = state.ffmpeg.FS('readFile', outputFileName);
+                const mimeMap = {
+                    mp3: 'audio/mpeg',
+                    wav: 'audio/wav',
+                    aac: 'audio/aac',
+                    flac: 'audio/flac',
+                    ogg: 'audio/ogg',
+                    m4a: 'audio/mp4'
+                };
+                const blob = new Blob([data.buffer], { type: mimeMap[state.outputFormat] || 'audio/mpeg' });
                 state.generatedBlob = blob;
 
-                // Clean up
+                // Clean up (remove from MEMFS)
                 updateProgress(95);
-                await state.ffmpeg.deleteFile(inputFileName);
-                await state.ffmpeg.deleteFile(outputFileName);
+                try { state.ffmpeg.FS('unlink', inputFileName); } catch (e) {}
+                try { state.ffmpeg.FS('unlink', outputFileName); } catch (e) {}
 
                 updateProgress(100);
                 showStatus('success', 'Conversion Complete!', `Audio extracted and converted to ${state.outputFormat.toUpperCase()}`);
@@ -1250,7 +579,7 @@
         });
 
         // Log App Version & Info
-        console.log('%c🎵 EveryVideo Audio Extractor & Converter', 'color: #667eea; font-size: 14px; font-weight: bold;');
+        console.log('%c🎵 UNIK AudioFlux Engine', 'color: #667eea; font-size: 14px; font-weight: bold;');
         console.log('%cVersion 1.0.0 | February 2026', 'color: #8b5cf6; font-size: 12px;');
         console.log('%c✅ 100%% offline | 🔒 Private | 🚀 Fast', 'color: #10b981; font-size: 12px;');
         console.log('Made with ❤️ for quality audio conversion');
