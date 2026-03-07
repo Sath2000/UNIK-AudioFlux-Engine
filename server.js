@@ -64,15 +64,15 @@ const server = http.createServer((req, res) => {
             const ext = path.extname(filePath).toLowerCase();
             const mimeType = mimeTypes[ext] || 'application/octet-stream';
 
-            // Set headers for WASM files
-            if (ext === '.wasm') {
-                res.writeHead(200, {
-                    'Content-Type': mimeType,
-                    'Access-Control-Allow-Origin': '*',
-                });
-            } else {
-                res.writeHead(200, { 'Content-Type': mimeType });
-            }
+            // Set necessary headers for SharedArrayBuffer (which FFmpeg requires)
+            const headers = {
+                'Content-Type': mimeType,
+                'Cross-Origin-Opener-Policy': 'same-origin',
+                'Cross-Origin-Embedder-Policy': 'require-corp',
+                'Access-Control-Allow-Origin': '*',
+            };
+
+            res.writeHead(200, headers);
 
             res.end(content);
         }

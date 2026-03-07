@@ -1,19 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Extract and convert audio from any video to MP3, WAV, AAC, FLAC, OGG, and M4A - 100% offline, secure, and free.">
+    <meta name="description"
+        content="Extract and convert audio from any video to MP3, WAV, AAC, FLAC, OGG, and M4A - 100% offline, secure, and free.">
     <meta name="theme-color" content="#000000">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="UNIK AudioFlux Engine">
     <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%23667eea' width='180' height='180'/><text x='90' y='100' font-size='80' font-weight='bold' fill='white' text-anchor='middle'>♪</text></svg>">
-    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="apple-touch-icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%23667eea' width='180' height='180'/><text x='90' y='100' font-size='80' font-weight='bold' fill='white' text-anchor='middle'>♪</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Inter:wght@300;400;600;700&display=swap"
+        rel="stylesheet">
     <title>UNIK AudioFlux Engine | Extract Audio Offline</title>
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
     <div class="container">
         <div class="header">
@@ -113,7 +118,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="info-box">All processing happens locally on your device. Your videos never leave your computer.</div>
+                <div class="info-box">All processing happens locally on your device. Your videos never leave your
+                    computer.</div>
             </div>
 
             <!-- Status Box -->
@@ -152,7 +158,7 @@
 
     <!-- FFmpeg.wasm Scripts (local vendored files) -->
     <!-- Place real files in /ffmpeg as described in /ffmpeg/README.txt -->
-    <script async src="/ffmpeg/ffmpeg.min.js"></script>
+    <script src="/ffmpeg/ffmpeg.min.js"></script>
 
     <!-- Service Worker Registration (Optional Offline Cache) -->
     <script>
@@ -172,7 +178,7 @@
     </script>
 
     <script>
-        const { createFFmpeg, fetchFile } = FFmpeg;
+        let createFFmpeg, fetchFile;
 
         // State Management
         const state = {
@@ -222,6 +228,9 @@
                     return;
                 }
 
+                createFFmpeg = FFmpeg.createFFmpeg;
+                fetchFile = FFmpeg.fetchFile;
+
                 // createFFmpeg will load core from local /ffmpeg
                 state.ffmpeg = createFFmpeg({
                     log: true,
@@ -229,8 +238,8 @@
                 });
 
                 // Logger and progress hooks
-                try { state.ffmpeg.setLogger(({ type, message }) => console.log(`[FFmpeg ${type}] ${message}`)); } catch (e) {}
-                try { state.ffmpeg.setProgress(({ ratio }) => updateProgress(Math.round(ratio * 100))); } catch (e) {}
+                try { state.ffmpeg.setLogger(({ type, message }) => console.log(`[FFmpeg ${type}] ${message}`)); } catch (e) { }
+                try { state.ffmpeg.setProgress(({ ratio }) => updateProgress(Math.round(ratio * 100))); } catch (e) { }
 
                 elements.ffmpegStatus.textContent = '⏳ Loading FFmpeg...';
                 await state.ffmpeg.load();
@@ -241,7 +250,7 @@
                 elements.convertBtn.disabled = false;
             } catch (error) {
                 console.error('FFmpeg initialization failed:', error);
-                showStatus('error', 'FFmpeg Failed', 'Failed to load FFmpeg. Please refresh the page.');
+                showStatus('error', 'FFmpeg Failed', 'Error: ' + (error.message || error.toString()));
                 elements.ffmpegStatus.textContent = '❌ FFmpeg Failed';
             }
         }
@@ -354,15 +363,15 @@
             showStatus('info', 'Processing', 'Loading video file...', true);
 
             try {
-            const originalName = state.videoFile.name || 'input';
-            const originalExt = originalName.split('.').pop() || 'mp4';
-            const inputFileName = `input.${originalExt}`;
-            const outputFileName = `output.${state.outputFormat}`;
+                const originalName = state.videoFile.name || 'input';
+                const originalExt = originalName.split('.').pop() || 'mp4';
+                const inputFileName = `input.${originalExt}`;
+                const outputFileName = `output.${state.outputFormat}`;
 
-            // Load video file into FFmpeg FS
-            updateProgress(15);
-            const videoData = await fetchFile(state.videoFile);
-            state.ffmpeg.FS('writeFile', inputFileName, videoData);
+                // Load video file into FFmpeg FS
+                updateProgress(15);
+                const videoData = await fetchFile(state.videoFile);
+                state.ffmpeg.FS('writeFile', inputFileName, videoData);
 
                 // Build FFmpeg command
                 updateProgress(30);
@@ -413,8 +422,8 @@
 
                 // Clean up (remove from MEMFS)
                 updateProgress(95);
-                try { state.ffmpeg.FS('unlink', inputFileName); } catch (e) {}
-                try { state.ffmpeg.FS('unlink', outputFileName); } catch (e) {}
+                try { state.ffmpeg.FS('unlink', inputFileName); } catch (e) { }
+                try { state.ffmpeg.FS('unlink', outputFileName); } catch (e) { }
 
                 updateProgress(100);
                 showStatus('success', 'Conversion Complete!', `Audio extracted and converted to ${state.outputFormat.toUpperCase()}`);
@@ -506,7 +515,7 @@
             elements.fileSize.textContent = `${fileSizeMB.toFixed(2)} MB`;
             elements.fileInfo.classList.add('show');
             elements.convertBtn.disabled = false;
-            
+
             console.log(`[App] File selected: ${file.name} (${fileSizeMB.toFixed(2)} MB)`);
         }
 
@@ -529,12 +538,12 @@
                 if (prefs) {
                     // Restore format
                     document.getElementById(`format-${prefs.format}`)?.click?.();
-                    
+
                     // Restore quality settings
                     elements.bitrateSelect.value = prefs.bitrate || '192';
                     elements.samplerateSelect.value = prefs.samplerate || '44100';
                     elements.channelSelect.value = prefs.channels || '2';
-                    
+
                     console.log('[App] User preferences loaded');
                 }
             } catch (e) {
@@ -601,4 +610,5 @@
         console.log('[App] ✅ All modules loaded successfully');
     </script>
 </body>
+
 </html>
