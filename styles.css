@@ -197,4 +197,292 @@ button{padding:12px 18px;border-radius:10px;font-weight:800;cursor:pointer;text-
 /* accessibility: focus outlines */
 .format-label:focus, .btn-primary:focus, .btn-secondary:focus{outline:3px solid rgba(255,212,0,0.14);outline-offset:3px}
 
+/* ============================================
+   ANIMATED LAVA LOADER - Futuristic Audio Processing Animation
+   ============================================ */
+
+.loader-modal{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    animation: fadeInLoader 0.4s ease-out;
+}
+
+.loader-modal.show{
+    display: flex;
+}
+
+@keyframes fadeInLoader{
+    from{ opacity: 0; }
+    to{ opacity: 1; }
+}
+
+.loader-overlay{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, rgba(0,0,0,0.75), rgba(0,0,0,0.95));
+    backdrop-filter: blur(4px);
+}
+
+.loader-container{
+    position: relative;
+    z-index: 10000;
+    text-align: center;
+    animation: loaderPulse 3s ease-in-out infinite;
+}
+
+@keyframes loaderPulse{
+    0%, 100%{ transform: scale(1); }
+    50%{ transform: scale(1.08); }
+}
+
+/* Main lava core container */
+.lava-core{
+    position: relative;
+    width: 180px;
+    height: 180px;
+    margin: 0 auto 32px;
+}
+
+/* Liquid lava blob - main spinning animation */
+.lava-liquid{
+    position: absolute;
+    width: 140px;
+    height: 140px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50% 45% 55% 48% / 48% 52% 45% 55%;
+    background: linear-gradient(45deg, #ffd400, #ffaa00, #ff8800);
+    animation: lavaSpinAndShapeShift 6s ease-in-out infinite, lavaPulseGlow 2s ease-in-out infinite;
+    filter: drop-shadow(0 0 30px rgba(255, 212, 0, 0.6)) 
+            drop-shadow(0 0 50px rgba(255, 136, 0, 0.4));
+    box-shadow: 
+        inset -10px -10px 30px rgba(0, 0, 0, 0.3),
+        inset 10px 10px 20px rgba(255, 255, 255, 0.1),
+        0 0 60px rgba(255, 212, 0, 0.5);
+}
+
+@keyframes lavaSpinAndShapeShift{
+    0%{
+        transform: translate(-50%, -50%) rotateZ(0deg);
+        border-radius: 50% 45% 55% 48% / 48% 52% 45% 55%;
+    }
+    25%{
+        border-radius: 45% 55% 50% 45% / 52% 48% 55% 45%;
+    }
+    50%{
+        transform: translate(-50%, -50%) rotateZ(180deg);
+        border-radius: 55% 48% 45% 52% / 45% 55% 48% 50%;
+    }
+    75%{
+        border-radius: 48% 50% 52% 55% / 55% 45% 52% 48%;
+    }
+    100%{
+        transform: translate(-50%, -50%) rotateZ(360deg);
+        border-radius: 50% 45% 55% 48% / 48% 52% 45% 55%;
+    }
+}
+
+@keyframes lavaPulseGlow{
+    0%, 100%{
+        filter: drop-shadow(0 0 30px rgba(255, 212, 0, 0.6)) 
+                drop-shadow(0 0 50px rgba(255, 136, 0, 0.4));
+    }
+    50%{
+        filter: drop-shadow(0 0 50px rgba(255, 212, 0, 0.8)) 
+                drop-shadow(0 0 80px rgba(255, 136, 0, 0.6));
+    }
+}
+
+/* Expanding waveform rings - audio data visualization */
+.waveform-ring{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    border: 2px solid rgba(255, 212, 0, 0.6);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 20px rgba(255, 212, 0, 0.3);
+}
+
+.ring-1{
+    width: 100px;
+    height: 100px;
+    animation: expandRing1 2s ease-out infinite;
+}
+
+.ring-2{
+    width: 80px;
+    height: 80px;
+    animation: expandRing2 2s ease-out 0.4s infinite;
+}
+
+.ring-3{
+    width: 60px;
+    height: 60px;
+    animation: expandRing3 2s ease-out 0.8s infinite;
+}
+
+@keyframes expandRing1{
+    0%{
+        width: 100px;
+        height: 100px;
+        opacity: 1;
+    }
+    100%{
+        width: 200px;
+        height: 200px;
+        opacity: 0;
+    }
+}
+
+@keyframes expandRing2{
+    0%{
+        width: 80px;
+        height: 80px;
+        opacity: 1;
+    }
+    100%{
+        width: 160px;
+        height: 160px;
+        opacity: 0;
+    }
+}
+
+@keyframes expandRing3{
+    0%{
+        width: 60px;
+        height: 60px;
+        opacity: 1;
+    }
+    100%{
+        width: 120px;
+        height: 120px;
+        opacity: 0;
+    }
+}
+
+/* Orbiting particles around the core */
+.orbit{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.orbit-1{
+    width: 160px;
+    height: 160px;
+    animation: orbitSpin1 8s linear infinite;
+}
+
+.orbit-2{
+    width: 140px;
+    height: 140px;
+    animation: orbitSpin2 10s linear infinite reverse;
+}
+
+.orbit-3{
+    width: 120px;
+    height: 120px;
+    animation: orbitSpin3 12s linear infinite;
+}
+
+.particle{
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.particle-1{
+    background: radial-gradient(circle, #ffff99, #ffd400);
+    box-shadow: 0 0 15px rgba(255, 212, 0, 0.8), 0 0 30px rgba(255, 168, 0, 0.5);
+}
+
+.particle-2{
+    background: radial-gradient(circle, #ffff99, #ffaa00);
+    box-shadow: 0 0 12px rgba(255, 170, 0, 0.7), 0 0 25px rgba(255, 136, 0, 0.4);
+}
+
+.particle-3{
+    background: radial-gradient(circle, #ffff99, #ff8800);
+    box-shadow: 0 0 10px rgba(255, 136, 0, 0.6), 0 0 20px rgba(255, 100, 0, 0.3);
+}
+
+@keyframes orbitSpin1{
+    from{ transform: translate(-50%, -50%) rotateZ(0deg); }
+    to{ transform: translate(-50%, -50%) rotateZ(360deg); }
+}
+
+@keyframes orbitSpin2{
+    from{ transform: translate(-50%, -50%) rotateZ(0deg); }
+    to{ transform: translate(-50%, -50%) rotateZ(-360deg); }
+}
+
+@keyframes orbitSpin3{
+    from{ transform: translate(-50%, -50%) rotateZ(0deg); }
+    to{ transform: translate(-50%, -50%) rotateZ(360deg); }
+}
+
+/* Pulsing glowing center core */
+.core-glow{
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, rgba(255, 255, 200, 0.4), rgba(255, 212, 0, 0.1));
+    animation: coreGlowPulse 2s ease-in-out infinite;
+    filter: blur(20px);
+}
+
+@keyframes coreGlowPulse{
+    0%, 100%{
+        box-shadow: 0 0 30px rgba(255, 212, 0, 0.4), 
+                    0 0 60px rgba(255, 168, 0, 0.2);
+    }
+    50%{
+        box-shadow: 0 0 60px rgba(255, 212, 0, 0.7), 
+                    0 0 100px rgba(255, 168, 0, 0.4);
+    }
+}
+
+/* Loader text */
+.loader-text{
+    color: var(--neon);
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    animation: textShimmer 2s ease-in-out infinite;
+    text-shadow: 0 0 20px rgba(255, 212, 0, 0.5);
+}
+
+@keyframes textShimmer{
+    0%, 100%{
+        opacity: 1;
+        text-shadow: 0 0 20px rgba(255, 212, 0, 0.5);
+    }
+    50%{
+        opacity: 0.7;
+        text-shadow: 0 0 40px rgba(255, 212, 0, 0.8);
+    }
+}
+
 /* end of styles.css */

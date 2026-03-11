@@ -32,6 +32,10 @@ A fully functional, **browser-based** audio extraction and conversion tool that 
 
 ## 🚀 How to Use
 
+> **Visitor Counter**
+> The live visitor count is shown in the footer when running via the supplied Node server (`server.js`). It increments each time the homepage is requested and is persisted across restarts.
+
+
 ### Quick Start
 1. **Open** `index.html` in any modern web browser (Chrome, Firefox, Safari, Edge)
 2. **Wait** for FFmpeg to load (you'll see "✅ Ready to use" badge)

@@ -11,10 +11,41 @@
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%23667eea' width='180' height='180'/><text x='90' y='100' font-size='80' font-weight='bold' fill='white' text-anchor='middle'>♪</text></svg>">
     <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <title>UNIK AudioFlux Engine | Extract Audio Offline</title>
+    <title>UNIK AudioFlux Engine | Extract Audio UNLIMITED</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- Animated Lava Loader Modal -->
+    <div class="loader-modal" id="loaderModal">
+        <div class="loader-overlay"></div>
+        <div class="loader-container">
+            <div class="lava-core">
+                <!-- Expanding waveform rings -->
+                <div class="waveform-ring ring-1"></div>
+                <div class="waveform-ring ring-2"></div>
+                <div class="waveform-ring ring-3"></div>
+                
+                <!-- Main spinning lava liquid -->
+                <div class="lava-liquid"></div>
+                
+                <!-- Orbiting particles -->
+                <div class="orbit orbit-1">
+                    <div class="particle particle-1"></div>
+                </div>
+                <div class="orbit orbit-2">
+                    <div class="particle particle-2"></div>
+                </div>
+                <div class="orbit orbit-3">
+                    <div class="particle particle-3"></div>
+                </div>
+                
+                <!-- Glowing center core -->
+                <div class="core-glow"></div>
+            </div>
+            <p class="loader-text">Extracting Audio Features...</p>
+        </div>
+    </div>
+
     <div class="container">
         <div class="header">
             <h1><span class="animated-title">UNIK AudioFlux Engine</span></h1>
@@ -145,8 +176,9 @@
         </div>
 
         <div class="footer">
-            <p>🔒 Completely private & offline | 🚀 Fast processing | 🎵 High-quality audio | Made with ❤️</p>
-            <p style="margin-top: 10px; font-size: 0.8em;">Powered by FFmpeg.wasm</p>
+            <p>🔒 Completely private  | 🚀 Fastest processing | 🎵 High-quality audio | Made with ❤️satxsk💗</p>
+            <p style="margin-top: 10px; font-size: 0.8em;">Powered by UNIX CODE FACTORY</p>
+            <p id="visitorCounter" style="margin-top: 5px; font-size: 0.8em;">Visitors: <span id="visitorCount">...</span></p>
         </div>
     </div>
 
@@ -183,6 +215,23 @@
             isFFmpegReady: false,
             generatedBlob: null,
         };
+
+        // visitor counter helper
+        function updateVisitorCount() {
+            fetch('/visitor-count')
+                .then((r) => r.json())
+                .then((d) => {
+                    document.getElementById('visitorCount').textContent = d.count;
+                })
+                .catch((e) => console.error('Error fetching visitor count', e));
+        }
+
+        // call once page loads, but only if served via http/https (not file://)
+        window.addEventListener('load', () => {
+            if (/^https?:/.test(location.protocol)) {
+                updateVisitorCount();
+            }
+        });
 
         // DOM Elements
         const elements = {
@@ -352,6 +401,9 @@
             elements.downloadSection.classList.remove('show');
             updateProgress(0);
             showStatus('info', 'Processing', 'Loading video file...', true);
+            
+            // Show the animated lava loader
+            document.getElementById('loaderModal').classList.add('show');
 
             try {
             const originalName = state.videoFile.name || 'input';
@@ -425,6 +477,8 @@
             } finally {
                 state.isProcessing = false;
                 elements.convertBtn.disabled = false;
+                // Hide the animated lava loader
+                document.getElementById('loaderModal').classList.remove('show');
             }
         }
 
@@ -580,7 +634,7 @@
         // Log App Version & Info
         console.log('%c🎵 UNIK AudioFlux Engine', 'color: #667eea; font-size: 14px; font-weight: bold;');
         console.log('%cVersion 1.0.0 | February 2026', 'color: #8b5cf6; font-size: 12px;');
-        console.log('%c✅ 100%% offline | 🔒 Private | 🚀 Fast', 'color: #10b981; font-size: 12px;');
+        console.log('%c✅ 100% SECURE | 🔒 Private | 🚀 Fast', 'color: #10b981; font-size: 12px;');
         console.log('Made with ❤️ for quality audio conversion');
 
         // Keyboard Shortcuts

@@ -16,7 +16,7 @@ const EXTERNAL_RESOURCES = [
     'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/esm/ffmpeg-core.wasm',
 ];
 
-// Install event: Cache essential assets
+// Install event: Cache essential assets here 
 self.addEventListener('install', (event) => {
     console.log('[ServiceWorker] Installing...');
     

@@ -10,7 +10,14 @@ PORT = 3000
 HOST = '127.0.0.1'
 
 class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
-    """Custom request handler with proper MIME types"""
+    """Custom request handler with proper MIME types and visitor counting"""
+
+    # load or initialize visitor count
+    count_file = Path(__file__).parent / 'visitorCount.json'
+    try:
+        visitor_count = int(count_file.read_text())
+    except Exception:
+        visitor_count = 0
 
     def end_headers(self):
         # Add CORS headers for WASM files
@@ -19,9 +26,25 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         super().end_headers()
 
     def do_GET(self):
-        # Serve index.html for root path
+        # API endpoint for visitor count
+        if self.path == '/visitor-count':
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.send_header('Cache-Control', 'no-cache')
+            self.end_headers()
+            self.wfile.write(f'{{"count": {self.visitor_count}}}'.encode())
+            return
+
+        # Serve index.html for root path and increment counter
         if self.path == '/':
             self.path = '/index.html'
+            # increment and save
+            self.__class__.visitor_count += 1
+            try:
+                self.count_file.write_text(str(self.visitor_count))
+            except Exception:
+                pass
+
         return super().do_GET()
 
 if __name__ == '__main__':

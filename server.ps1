@@ -95,7 +95,7 @@ try {
     while ($Listener.IsListening) {
         $Context = $Listener.GetContext()
         $Request = $Context.Request
-        $Response = $Context.Response
+        $Response = $Context.Responsem
         
         try {
             $FilePath = Get-FilePath $Request.Url.LocalPath

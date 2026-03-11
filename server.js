@@ -26,6 +26,17 @@ const mimeTypes = {
     '.mp3': 'audio/mpeg',
 };
 
+// load or initialize visitor count
+const countFilePath = path.join(__dirname, 'visitorCount.json');
+let visitorCount = 0;
+try {
+    const data = fs.readFileSync(countFilePath, 'utf8');
+    visitorCount = JSON.parse(data).count || 0;
+} catch (e) {
+    // file might not exist yet or be invalid; start at 0
+    visitorCount = 0;
+}
+
 // Create server
 const server = http.createServer((req, res) => {
     // Parse request URL
@@ -35,6 +46,17 @@ const server = http.createServer((req, res) => {
     // Default to index.html
     if (pathname === '/') {
         pathname = '/index.html';
+    }
+
+    // Simple API endpoint to retrieve the current visitor count
+    if (pathname === '/visitor-count') {
+        const payload = { count: visitorCount };
+        res.writeHead(200, {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache',
+        });
+        res.end(JSON.stringify(payload));
+        return;
     }
 
     // Resolve file path
@@ -47,6 +69,12 @@ const server = http.createServer((req, res) => {
         res.writeHead(403, { 'Content-Type': 'text/plain' });
         res.end('Forbidden');
         return;
+    }
+
+    // If serving the main page, increment visitor count and persist
+    if (pathname === '/index.html') {
+        visitorCount++;
+        fs.writeFile(countFilePath, JSON.stringify({ count: visitorCount }), () => {});
     }
 
     // Read and serve file
