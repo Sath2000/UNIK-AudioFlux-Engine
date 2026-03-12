@@ -1,7 +1,7 @@
 // Service Worker for UNIK AudioFlux Engine
 // Enables offline functionality after first load
 
-const CACHE_NAME = 'everyvideoconverter-v1';
+const CACHE_NAME = 'everyvideoconverter-v2';
 const ASSETS_TO_CACHE = [
     '/',
     '/index.html',
@@ -19,7 +19,7 @@ const EXTERNAL_RESOURCES = [
 // Install event: Cache essential assets here 
 self.addEventListener('install', (event) => {
     console.log('[ServiceWorker] Installing...');
-    
+
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then((cache) => {
@@ -33,7 +33,7 @@ self.addEventListener('install', (event) => {
 // Activate event: Clean up old caches
 self.addEventListener('activate', (event) => {
     console.log('[ServiceWorker] Activating...');
-    
+
     event.waitUntil(
         caches.keys().then((cacheNames) => {
             return Promise.all(
@@ -74,15 +74,15 @@ self.addEventListener('fetch', (event) => {
                 })
                 .catch(() => {
                     // Fallback to cache only if network fails
-                    return caches.match(request) || 
-                           new Response('Offline - Page not available', {
-                               status: 503,
-                               statusText: 'Service Unavailable',
-                               headers: new Headers({
-                                   'Content-Type': 'text/plain'
-                               })
-                           });
-                });
+                    return caches.match(request) ||
+                        new Response('Offline - Page not available', {
+                            status: 503,
+                            statusText: 'Service Unavailable',
+                            headers: new Headers({
+                                'Content-Type': 'text/plain'
+                            })
+                        });
+                })
         );
     }
 
@@ -103,10 +103,10 @@ self.addEventListener('fetch', (event) => {
                 .catch(() => {
                     // Fallback to cache for offline access if available
                     return caches.match(request) ||
-                           new Response('Resource unavailable', {
-                               status: 503,
-                               headers: new Headers({ 'Content-Type': 'text/plain' })
-                           });
+                        new Response('Resource unavailable', {
+                            status: 503,
+                            headers: new Headers({ 'Content-Type': 'text/plain' })
+                        });
                 })
         );
     }
@@ -117,17 +117,17 @@ self.addEventListener('message', (event) => {
     if (event.data.action === 'skipWaiting') {
         self.skipWaiting();
     }
-    
+
     if (event.data.action === 'clearCache') {
         caches.delete(CACHE_NAME).then(() => {
             event.ports[0].postMessage({ success: true });
         });
     }
-    
+
     if (event.data.action === 'cacheStatus') {
         caches.open(CACHE_NAME).then((cache) => {
             cache.keys().then((keys) => {
-                event.ports[0].postMessage({ 
+                event.ports[0].postMessage({
                     cached: keys.length,
                     files: keys.map(k => k.url)
                 });
