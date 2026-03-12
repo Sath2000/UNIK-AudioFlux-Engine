@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thunder Stars Cursor Effect Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 100%;
+            height: 100vh;
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Arial', sans-serif;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #ffd400;
+        }
+
+        .instructions {
+            font-size: 1.2rem;
+            color: #aaa;
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+
+        .test-area {
+            width: 600px;
+            height: 300px;
+            border: 3px solid #ffd400;
+            border-radius: 20px;
+            margin: 30px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 212, 0, 0.05);
+            cursor: pointer;
+        }
+
+        .test-area:hover {
+            background: rgba(255, 212, 0, 0.1);
+            box-shadow: 0 0 30px rgba(255, 212, 0, 0.3);
+        }
+
+        .test-area p {
+            font-size: 1.1rem;
+            color: #ffd400;
+        }
+
+        .console-output {
+            width: 800px;
+            height: 200px;
+            background: #0a0a0a;
+            border: 2px solid #ffd400;
+            border-radius: 10px;
+            margin: 20px auto;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            overflow-y: auto;
+            color: #ffd400;
+        }
+
+        .log-entry {
+            margin: 5px 0;
+            padding: 3px;
+        }
+
+        /* Cursor effect CSS */
+        .spark {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9998;
+            will-change: transform, opacity;
+            font-size: 1.3rem;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .spark.spark {
+            animation: sparkBurst 0.8s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards;
+        }
+
+        .spark.thunder {
+            animation: thunderBurst 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .spark.star {
+            animation: starBurst 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes sparkBurst {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+                filter: drop-shadow(0 0 12px rgba(255, 212, 0, 1))
+                        drop-shadow(0 0 24px rgba(255, 168, 0, 0.8));
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--tx), var(--ty)) scale(0.1);
+                filter: drop-shadow(0 0 2px rgba(255, 212, 0, 0));
+            }
+        }
+
+        @keyframes thunderBurst {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1.2) rotateZ(0deg);
+                filter: drop-shadow(0 0 15px rgba(255, 212, 0, 1))
+                        drop-shadow(0 0 30px rgba(255, 168, 0, 0.9));
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--tx), var(--ty)) scale(0.05) rotateZ(180deg);
+            }
+        }
+
+        @keyframes starBurst {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1) rotateZ(0deg);
+                filter: drop-shadow(0 0 10px rgba(255, 212, 0, 1));
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--tx), var(--ty)) scale(0.1) rotateZ(360deg);
+            }
+        }
+
+        .glow-ring {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9998;
+            border: 2px solid rgba(255, 212, 0, 0.6);
+            border-radius: 50%;
+            animation: ringExpand 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        @keyframes ringExpand {
+            0% {
+                width: 20px;
+                height: 20px;
+                opacity: 1;
+                box-shadow: 0 0 20px rgba(255, 212, 0, 0.8);
+                transform: translate(-50%, -50%);
+            }
+            100% {
+                width: 80px;
+                height: 80px;
+                opacity: 0;
+                box-shadow: 0 0 60px rgba(255, 212, 0, 0);
+                transform: translate(-50%, -50%);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚡ Thunder Stars Cursor Effect Test</h1>
+        <div class="instructions">
+            <p>✨ Move your mouse around to see particles trail</p>
+            <p>⚡ Click anywhere to trigger a burst effect</p>
+            <p>📱 Works on touch devices too - just tap and drag!</p>
+        </div>
+
+        <div class="test-area">
+            <p>👉 Move or Click Here 👈</p>
+        </div>
+
+        <div class="console-output" id="consoleOutput">
+            <div class="log-entry">[Ready] Move your mouse or click to test...</div>
+        </div>
+    </div>
+
+    <script>
+        const consoleOutput = document.getElementById('consoleOutput');
+        const maxLogs = 20;
+        let logCount = 0;
+
+        function addLog(message) {
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            consoleOutput.appendChild(logEntry);
+            
+            logCount++;
+            if (logCount > maxLogs) {
+                const firstChild = consoleOutput.firstChild;
+                if (firstChild) firstChild.remove();
+            }
+            
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+        }
+
+        // Cursor effect config
+        const cursorEffectConfig = {
+            throttleMs: 30,
+            spawnChance: 0.6,
+            particleLifetime: 800,
+            clickEffectIntensity: 8
+        };
+
+        let lastParticleTime = 0;
+        const particleTypes = ['spark', 'thunder', 'star'];
+
+        function createParticle(x, y, type = 'spark') {
+            const particle = document.createElement('div');
+            particle.className = `spark ${type}`;
+            
+            const emojiMap = {
+                'spark': '✨',
+                'thunder': '⚡',
+                'star': '⭐'
+            };
+            particle.textContent = emojiMap[type] || '✨';
+            
+            const angle = Math.random() * Math.PI * 2;
+            const distance = 60 + Math.random() * 100;
+            const tx = Math.cos(angle) * distance;
+            const ty = Math.sin(angle) * distance;
+            
+            particle.style.setProperty('--tx', `${tx}px`);
+            particle.style.setProperty('--ty', `${ty}px`);
+            particle.style.left = `${x}px`;
+            particle.style.top = `${y}px`;
+            
+            document.body.appendChild(particle);
+            
+            setTimeout(() => {
+                particle.remove();
+            }, cursorEffectConfig.particleLifetime);
+            
+            addLog(`✓ ${type.toUpperCase()} particle at (${Math.round(x)}, ${Math.round(y)})`);
+        }
+
+        function createGlowRing(x, y) {
+            const ring = document.createElement('div');
+            ring.className = 'glow-ring';
+            ring.style.left = `${x}px`;
+            ring.style.top = `${y}px`;
+            
+            document.body.appendChild(ring);
+            
+            setTimeout(() => {
+                ring.remove();
+            }, 800);
+        }
+
+        function createBurstEffect(x, y) {
+            addLog(`💥 BURST EFFECT triggered at (${Math.round(x)}, ${Math.round(y)})`);
+            createGlowRing(x, y);
+            
+            for (let i = 0; i < cursorEffectConfig.clickEffectIntensity; i++) {
+                setTimeout(() => {
+                    const type = particleTypes[Math.floor(Math.random() * particleTypes.length)];
+                    createParticle(x, y, type);
+                }, i * 40);
+            }
+        }
+
+        // Mouse events
+        document.addEventListener('mousemove', (e) => {
+            const now = Date.now();
+            
+            if (now - lastParticleTime < cursorEffectConfig.throttleMs) {
+                return;
+            }
+            
+            if (Math.random() > cursorEffectConfig.spawnChance) {
+                return;
+            }
+            
+            lastParticleTime = now;
+            const type = particleTypes[Math.floor(Math.random() * particleTypes.length)];
+            createParticle(e.clientX, e.clientY, type);
+        });
+
+        document.addEventListener('click', (e) => {
+            createBurstEffect(e.clientX, e.clientY);
+        });
+
+        // Touch events
+        document.addEventListener('touchmove', (e) => {
+            const now = Date.now();
+            if (now - lastParticleTime < cursorEffectConfig.throttleMs * 1.5) {
+                return;
+            }
+            lastParticleTime = now;
+            
+            Array.from(e.touches).forEach(touch => {
+                const type = particleTypes[Math.floor(Math.random() * particleTypes.length)];
+                createParticle(touch.clientX, touch.clientY, type);
+            });
+        }, { passive: true });
+
+        document.addEventListener('touchstart', (e) => {
+            Array.from(e.touches).forEach(touch => {
+                createBurstEffect(touch.clientX, touch.clientY);
+            });
+        }, { passive: true });
+
+        addLog('✅ Thunder Stars Cursor Effect loaded and ready!');
+    </script>
+</body>
+</html>

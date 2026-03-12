@@ -176,7 +176,7 @@
         </div>
 
         <div class="footer">
-            <p>🔒 Completely private  | 🚀 Fastest processing | 🎵 High-quality audio | Made with ❤️satxsk💗</p>
+            <p>🔒 Completely private  | 🚀 Fastest processing | 🎵 High-quality audio | Made with ❤️SatXsk💗</p>
             <p style="margin-top: 10px; font-size: 0.8em;">Powered by UNIX CODE FACTORY</p>
             <p id="visitorCounter" style="margin-top: 5px; font-size: 0.8em;">Visitors: <span id="visitorCount">...</span></p>
         </div>
@@ -483,7 +483,7 @@
         }
 
         function showDownloadSection() {
-            const outputFileName = `${state.videoFile.name.split('.')[0]}.${state.outputFormat}`;
+            const outputFileName = `sathishaudflxen.${state.outputFormat}`;
             elements.downloadFileName.textContent = outputFileName;
             elements.downloadSection.classList.add('show');
         }
@@ -495,7 +495,7 @@
             const url = URL.createObjectURL(state.generatedBlob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `${state.videoFile.name.split('.')[0]}.${state.outputFormat}`;
+            a.download = `sathishaudflxen.${state.outputFormat}`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -632,7 +632,7 @@
         });
 
         // Log App Version & Info
-        console.log('%c🎵 UNIK AudioFlux Engine', 'color: #667eea; font-size: 14px; font-weight: bold;');
+        console.log('%c🎵 UNIK AudioFlux Engine ✨', 'color: #ffd400; font-size: 14px; font-weight: bold;');
         console.log('%cVersion 1.0.0 | February 2026', 'color: #8b5cf6; font-size: 12px;');
         console.log('%c✅ 100% SECURE | 🔒 Private | 🚀 Fast', 'color: #10b981; font-size: 12px;');
         console.log('Made with ❤️ for quality audio conversion');
@@ -653,6 +653,154 @@
         });
 
         console.log('[App] ✅ All modules loaded successfully');
+
+        // ==================== THUNDER STARS CURSOR EFFECT ====================
+
+        // Cursor particle effect configuration
+        const cursorEffectConfig = {
+            throttleMs: 30,
+            spawnChance: 0.6,
+            particleLifetime: 800,
+            clickEffectIntensity: 8
+        };
+
+        let lastParticleTime = 0;
+
+        // Particle types pool
+        const particleTypes = ['spark','star'];
+
+        /**
+         * Create a spark/thunder/star particle at given coordinates
+         */
+        function createParticle(x, y, type = 'spark') {
+            const particle = document.createElement('div');
+            particle.className = `spark ${type}`;
+            
+            // Add emoji content directly
+            const emojiMap = {
+                'spark': '✨',
+               
+                'star': '⭐'
+            };
+            particle.textContent = emojiMap[type] || '✨';
+            
+            // Random burst direction (angles 0-360 degrees)
+            const angle = Math.random() * Math.PI * 2;
+            const distance = 60 + Math.random() * 100;
+            const tx = Math.cos(angle) * distance;
+            const ty = Math.sin(angle) * distance;
+            
+            // Set CSS custom properties for animation
+            particle.style.setProperty('--tx', `${tx}px`);
+            particle.style.setProperty('--ty', `${ty}px`);
+            particle.style.left = `${x}px`;
+            particle.style.top = `${y}px`;
+            
+            document.body.appendChild(particle);
+            
+            // Auto-remove after animation completes
+            setTimeout(() => {
+                particle.remove();
+            }, cursorEffectConfig.particleLifetime);
+        }
+
+        /**
+         * Create ring glow effect on click/tap
+         */
+        function createGlowRing(x, y) {
+            const ring = document.createElement('div');
+            ring.className = 'glow-ring';
+            ring.style.left = `${x}px`;
+            ring.style.top = `${y}px`;
+            
+            document.body.appendChild(ring);
+            
+            // Auto-remove after animation
+            setTimeout(() => {
+                ring.remove();
+            }, 800);
+        }
+
+        /**
+         * Create burst effect on click with multiple particles
+         */
+        function createBurstEffect(x, y) {
+            createGlowRing(x, y);
+            
+            // Spawn multiple particles in burst
+            for (let i = 0; i < cursorEffectConfig.clickEffectIntensity; i++) {
+                setTimeout(() => {
+                    const type = particleTypes[Math.floor(Math.random() * particleTypes.length)];
+                    createParticle(x, y, type);
+                }, i * 40);
+            }
+        }
+
+        /**
+         * Mouse move event - trail effect
+         */
+        document.addEventListener('mousemove', (e) => {
+            const now = Date.now();
+            
+            // Throttle particle creation
+            if (now - lastParticleTime < cursorEffectConfig.throttleMs) {
+                return;
+            }
+            
+            // Probabilistic spawning for performance
+            if (Math.random() > cursorEffectConfig.spawnChance) {
+                return;
+            }
+            
+            lastParticleTime = now;
+            
+            // Random particle type
+            const type = particleTypes[Math.floor(Math.random() * particleTypes.length)];
+            createParticle(e.clientX, e.clientY, type);
+            console.log(`[Cursor] Created ${type} particle at (${e.clientX}, ${e.clientY})`);
+        });
+
+        /**
+         * Mouse click event - burst effect
+         */
+        document.addEventListener('click', (e) => {
+            console.log(`[Cursor] Click detected at (${e.clientX}, ${e.clientY}) - creating burst`);
+            createBurstEffect(e.clientX, e.clientY);
+        });
+
+        /**
+         * Touch move event - trail effect for mobile
+         */
+        document.addEventListener('touchmove', (e) => {
+            const now = Date.now();
+            
+            if (now - lastParticleTime < cursorEffectConfig.throttleMs * 1.5) {
+                return;
+            }
+            
+            if (Math.random() > cursorEffectConfig.spawnChance * 1.2) {
+                return;
+            }
+            
+            lastParticleTime = now;
+            
+            // Process each touch point
+            Array.from(e.touches).forEach(touch => {
+                const type = particleTypes[Math.floor(Math.random() * particleTypes.length)];
+                createParticle(touch.clientX, touch.clientY, type);
+            });
+        }, { passive: true });
+
+        /**
+         * Touch start event - burst effect on tap
+         */
+        document.addEventListener('touchstart', (e) => {
+            Array.from(e.touches).forEach(touch => {
+                createBurstEffect(touch.clientX, touch.clientY);
+            });
+        }, { passive: true });
+
+        console.log('[App] 🎆 Thunder Stars Cursor Effect initialized');
     </script>
 </body>
 </html>
