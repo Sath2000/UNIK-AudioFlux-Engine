@@ -1,139 +1,24 @@
-// Service Worker for UNIK AudioFlux Engine
-// Enables offline functionality after first load
+// Self-destructing Service Worker to clean up the old offline cache
+// This prevents older cached versions from blocking the new coi-serviceworker implementation.
 
-const CACHE_NAME = 'everyvideoconverter-v2';
-const ASSETS_TO_CACHE = [
-    '/',
-    '/index.html',
-    '/manifest.json',
-];
-
-const EXTERNAL_CACHE = 'ffmpeg-wasm-v1';
-const EXTERNAL_RESOURCES = [
-    'https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.6/dist/ffmpeg.min.js',
-    'https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.0/dist/util.min.js',
-    'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/esm/ffmpeg-core.js',
-    'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/esm/ffmpeg-core.wasm',
-];
-
-// Install event: Cache essential assets here 
-self.addEventListener('install', (event) => {
-    console.log('[ServiceWorker] Installing...');
-
-    event.waitUntil(
-        caches.open(CACHE_NAME)
-            .then((cache) => {
-                console.log('[ServiceWorker] Caching app shell');
-                return cache.addAll(ASSETS_TO_CACHE);
-            })
-            .then(() => self.skipWaiting())
-    );
+self.addEventListener('install', (e) => {
+    self.skipWaiting();
 });
 
-// Activate event: Clean up old caches
-self.addEventListener('activate', (event) => {
-    console.log('[ServiceWorker] Activating...');
-
-    event.waitUntil(
+self.addEventListener('activate', (e) => {
+    e.waitUntil(
         caches.keys().then((cacheNames) => {
             return Promise.all(
                 cacheNames.map((cacheName) => {
-                    if (cacheName !== CACHE_NAME && cacheName !== EXTERNAL_CACHE) {
-                        console.log('[ServiceWorker] Deleting old cache:', cacheName);
-                        return caches.delete(cacheName);
-                    }
+                    return caches.delete(cacheName);
                 })
             );
-        }).then(() => self.clients.claim())
+        }).then(() => {
+            return self.registration.unregister();
+        }).then(() => {
+            return self.clients.matchAll();
+        }).then((clients) => {
+            clients.forEach(client => client.navigate(client.url));
+        })
     );
 });
-
-// Fetch event: Network-first strategy (ONLINE MODE PRIMARY)
-self.addEventListener('fetch', (event) => {
-    const { request } = event;
-    const url = new URL(request.url);
-
-    // Skip non-GET requests
-    if (request.method !== 'GET') {
-        return;
-    }
-
-    // Strategy for app files: Network-first, cache fallback
-    if (url.origin === self.location.origin) {
-        event.respondWith(
-            fetch(request)
-                .then((response) => {
-                    // Cache successful responses
-                    if (response && response.status === 200) {
-                        const responseToCache = response.clone();
-                        caches.open(CACHE_NAME).then((cache) => {
-                            cache.put(request, responseToCache);
-                        });
-                    }
-                    return response;
-                })
-                .catch(() => {
-                    // Fallback to cache only if network fails
-                    return caches.match(request) ||
-                        new Response('Offline - Page not available', {
-                            status: 503,
-                            statusText: 'Service Unavailable',
-                            headers: new Headers({
-                                'Content-Type': 'text/plain'
-                            })
-                        });
-                })
-        );
-    }
-
-    // Strategy for external resources (FFmpeg, fonts): Network-first
-    if (EXTERNAL_RESOURCES.some(resource => request.url.includes(resource))) {
-        event.respondWith(
-            fetch(request)
-                .then((response) => {
-                    // Cache successful external resources
-                    if (response && response.status === 200) {
-                        const responseToCache = response.clone();
-                        caches.open(EXTERNAL_CACHE).then((cache) => {
-                            cache.put(request, responseToCache);
-                        });
-                    }
-                    return response;
-                })
-                .catch(() => {
-                    // Fallback to cache for offline access if available
-                    return caches.match(request) ||
-                        new Response('Resource unavailable', {
-                            status: 503,
-                            headers: new Headers({ 'Content-Type': 'text/plain' })
-                        });
-                })
-        );
-    }
-});
-
-// Message handler for cache management
-self.addEventListener('message', (event) => {
-    if (event.data.action === 'skipWaiting') {
-        self.skipWaiting();
-    }
-
-    if (event.data.action === 'clearCache') {
-        caches.delete(CACHE_NAME).then(() => {
-            event.ports[0].postMessage({ success: true });
-        });
-    }
-
-    if (event.data.action === 'cacheStatus') {
-        caches.open(CACHE_NAME).then((cache) => {
-            cache.keys().then((keys) => {
-                event.ports[0].postMessage({
-                    cached: keys.length,
-                    files: keys.map(k => k.url)
-                });
-            });
-        });
-    }
-});
-
-console.log('[ServiceWorker] Service Worker ready');
