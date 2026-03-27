@@ -182,26 +182,15 @@
         </div>
     </div>
 
+    <!-- Cross-Origin Isolation Service Worker (fixes GitHub Pages loading) -->
+    <script src="coi-serviceworker.min.js"></script>
+
     <!-- FFmpeg.wasm Scripts (local vendored files) -->
     <!-- Place real files in /ffmpeg as described in /ffmpeg/README.txt -->
     <script async src="ffmpeg/ffmpeg.min.js"></script>
 
-    <!-- Service Worker Registration (Optional Offline Cache) -->
-    <script>
-        // Register Service Worker for optional offline support and caching
-        // Site works perfectly online; SW is supplementary for offline access
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js')
-                    .then((registration) => {
-                        console.log('[App] ✅ Service Worker registered for offline cache support');
-                    })
-                    .catch((error) => {
-                        console.log('[App] ℹ️ Service Worker not available (site works online without it)');
-                    });
-            });
-        }
-    </script>
+    <!-- Service Worker Registration disabled in favor of coi-serviceworker
+         which handles Cross-Origin headers required by FFmpeg.wasm -->
 
     <script>
         const { createFFmpeg, fetchFile } = FFmpeg;
