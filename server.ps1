@@ -95,7 +95,7 @@ try {
     while ($Listener.IsListening) {
         $Context = $Listener.GetContext()
         $Request = $Context.Request
-        $Response = $Context.Responsem
+        $Response = $Context.Response
         
         try {
             $FilePath = Get-FilePath $Request.Url.LocalPath
@@ -110,6 +110,9 @@ try {
                 $Response.ContentType = $MimeType
                 $Response.ContentLength64 = $Content.Length
                 $Response.StatusCode = 200
+                
+                $Response.AddHeader("Cross-Origin-Opener-Policy", "same-origin")
+                $Response.AddHeader("Cross-Origin-Embedder-Policy", "require-corp")
                 
                 # Add CORS headers for WASM
                 if ($Ext -eq '.wasm') {

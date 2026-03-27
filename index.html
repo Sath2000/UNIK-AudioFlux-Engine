@@ -184,7 +184,7 @@
 
     <!-- FFmpeg.wasm Scripts (local vendored files) -->
     <!-- Place real files in /ffmpeg as described in /ffmpeg/README.txt -->
-    <script async src="/ffmpeg/ffmpeg.min.js"></script>
+    <script async src="ffmpeg/ffmpeg.min.js"></script>
 
     <!-- Service Worker Registration (Optional Offline Cache) -->
     <script>
@@ -274,7 +274,7 @@
                 // createFFmpeg will load core from local /ffmpeg
                 state.ffmpeg = createFFmpeg({
                     log: true,
-                    corePath: '/ffmpeg/ffmpeg-core.js'
+                    corePath: 'ffmpeg/ffmpeg-core.js'
                 });
 
                 // Logger and progress hooks

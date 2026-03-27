@@ -20,9 +20,10 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         visitor_count = 0
 
     def end_headers(self):
-        # Add CORS headers for WASM files
-        if self.path.endswith('.wasm'):
-            self.send_header('Access-Control-Allow-Origin', '*')
+        # Add CORS and Cross-Origin Isolation headers for FFmpeg
+        self.send_header('Cross-Origin-Opener-Policy', 'same-origin')
+        self.send_header('Cross-Origin-Embedder-Policy', 'require-corp')
+        self.send_header('Access-Control-Allow-Origin', '*')
         super().end_headers()
 
     def do_GET(self):
